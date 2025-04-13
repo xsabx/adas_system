@@ -15,9 +15,9 @@ class ClientsController < ApplicationController
     @request.status = 'pending'
 
     if @request.save
-      render json: { success: true, message: 'Request submitted successfully' }
+      render json: { success: true, message: 'Pieprasījums veiksmīgi iesniegts' }
     else
-      render json: { success: false, message: 'Failed to submit request' }, status: :unprocessable_entity
+      render json: { success: false, message: 'Neizdevās iesniegt pieprasījumu' }, status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class ClientsController < ApplicationController
 
   def ensure_client
     unless current_user.client?
-      redirect_to root_path, alert: 'Access denied. Client area only.'
+      redirect_to root_path, alert: 'Piekļuve liegta. Šī sadaļa pieejama tikai klientiem.'
     end
   end
 

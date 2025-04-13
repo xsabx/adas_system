@@ -1,24 +1,24 @@
 <div class="client-dashboard">
   <div class="header">
-    <h1>Client Dashboard</h1>
+    <h1>Klienta panelis</h1>
     <div class="user-info">
-      <p>Welcome, <%= @user.name %></p>
-      <p>Email: <%= @user.email %></p>
+      <p>Sveicināts, <%= @user.name %></p>
+      <p>E-pasts: <%= @user.email %></p>
     </div>
     <div class="logout">
-      <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'logout-button' %>
+      <%= button_to 'Izrakstīties', destroy_user_session_path, method: :delete, class: 'logout-button' %>
     </div>
   </div>
 
   <div class="content">
-    <h2>New Request</h2>
-    
+    <h2>Jauns pieprasījums</h2>
+
     <%= form_with(model: @request, url: clients_create_request_path, local: true, class: 'request-form') do |f| %>
       <div class="form-group">
-        <%= f.label :request_type, "Request Type" %>
+        <%= f.label :request_type, "Pieprasījuma veids" %>
         <%= f.select :request_type, 
-            options_for_select([['Technical Request', 'technical'], ['Course Content Request', 'course']]), 
-            { prompt: 'Select request type' },
+            options_for_select([['Tehnisks pieprasījums', 'technical'], ['Kursa saturs', 'course']]), 
+            { prompt: 'Izvēlies pieprasījuma veidu' },
             { class: 'form-control', id: 'request-type-select' } 
         %>
       </div>
@@ -26,7 +26,7 @@
       <div id="technical-fields" class="dynamic-fields" style="display: none;">
         <div class="form-group">
           <%= f.fields_for :technical_request do |tf| %>
-            <%= tf.label :description, "Technical Issue Description" %>
+            <%= tf.label :description, "Problēmas apraksts" %>
             <%= tf.text_area :description, class: 'form-control', rows: 5 %>
           <% end %>
         </div>
@@ -35,7 +35,7 @@
       <div id="course-fields" class="dynamic-fields" style="display: none;">
         <div class="form-group">
           <%= f.fields_for :course_content_request do |cf| %>
-            <%= cf.label :course, "Course" %>
+            <%= cf.label :course, "Kurss" %>
             <%= cf.select :course, 
                 options_for_select([
                   ['Programmēšanas pamati ar Ruby', 'Programmēšanas pamati ar Ruby'],
@@ -43,16 +43,16 @@
                   ['Datu struktūras un algoritmi', 'Datu struktūras un algoritmi'],
                   ['Bāzes dati un SQL pamati', 'Bāzes dati un SQL pamati'],
                   ['Mašīnmācīšanās ievads', 'Mašīnmācīšanās ievads'],
-                  ['Tīmekļa drošība un hakeru domāšana', 'Tīmekļa drošība un hakeru domāšana'],
+                  ['Tīmeka drošība un hakeru domāšana', 'Tīmeka drošība un hakeru domāšana'],
                   ['Mobilo lietotņu izstrāde ar React Native', 'Mobilo lietotņu izstrāde ar React Native'],
                   ['Versiju kontrole ar Git un GitHub', 'Versiju kontrole ar Git un GitHub'],
                   ['Testēšanas automatizācija ar Selenium un Robot Framework', 'Testēšanas automatizācija ar Selenium un Robot Framework'],
                   ['Agilā izstrāde un Scrum komandas darbs', 'Agilā izstrāde un Scrum komandas darbs']
                 ]),
-                { prompt: 'Select a course' },
+                { prompt: 'Izvēlies kursu' },
                 { class: 'form-control' }
             %>
-            <%= cf.label :category, "Category" %>
+            <%= cf.label :category, "Kategorija" %>
             <%= cf.select :category, 
                 options_for_select([
                   ['Neprecīza informācija', 'Neprecīza informācija'],
@@ -60,50 +60,50 @@
                   ['Trūkst saturs vai materiāli', 'Trūkst saturs vai materiāli'],
                   ['Nestrādā testi vai uzdevumi', 'Nestrādā testi vai uzdevumi']
                 ]),
-                { prompt: 'Select a category' },
+                { prompt: 'Izvēlies kategoriju' },
                 { class: 'form-control' }
             %>
-            <%= cf.label :description, "Description" %>
+            <%= cf.label :description, "Problēmas apraksts" %>
             <%= cf.text_area :description, class: 'form-control', rows: 5 %>
           <% end %>
         </div>
       </div>
 
       <div class="form-actions">
-        <%= f.submit "Submit Request", class: 'submit-button' %>
+        <%= f.submit "Iesniegt pieprasījumu", class: 'submit-button' %>
       </div>
     <% end %>
 
     <div id="request-success" class="alert alert-success" style="display: none;">
-      Your request has been submitted successfully!
+      Jūsu pieprasījums ir veiksmīgi iesniegts!
     </div>
   </div>
 </div>
 
 <div class="contracts-section">
-  <h2>Your Contracts</h2>
+  <h2>Jūsu līgumi</h2>
   <% pending_contracts = @contracts.where.not(status: 'accepted') %>
   <% if pending_contracts.any? %>
     <% pending_contracts.each do |contract| %>
       <div class="contract-item">
         <div class="contract-details">
-          <p>Contract Number: <%= contract.id %></p>
-          <p>Registration Date: <%= contract.registration_time ? contract.registration_time.strftime('%B %d, %Y') : 'Not registered' %></p>
-          <p>Status: <%= contract.status.titleize %></p>
+          <p>Līguma numurs: <%= contract.id %></p>
+          <p>Reģistrācijas datums: <%= contract.registration_time ? contract.registration_time.strftime('%Y. gada %d. %B') : 'Nav reģistrēts' %></p>
+          <p>Statuss: <%= contract.status.titleize %></p>
         </div>
         <div class="contract-actions">
           <% if contract.pdf.attached? %>
-            <%= link_to 'Download PDF', download_contract_path(contract), class: 'btn btn-primary' %>
+            <%= link_to 'Lejupielādēt PDF', download_contract_path(contract), class: 'btn btn-primary' %>
           <% end %>
-          <%= button_to 'Accept Contract', accept_contract_path(contract), 
+          <%= button_to 'Apstiprināt līgumu', accept_contract_path(contract), 
                         method: :post, 
                         class: 'btn btn-success',
-                        data: { confirm: 'Are you sure you want to accept this contract?' } %>
+                        data: { confirm: 'Vai tiešām vēlaties apstiprināt šo līgumu?' } %>
         </div>
       </div>
     <% end %>
   <% else %>
-    <p class="no-contracts">You don't have any pending contracts.</p>
+    <p class="no-contracts">Jums nav neviena līguma, kas gaida apstiprinājumu.</p>
   <% end %>
 </div>
 
@@ -284,55 +284,55 @@
     }
   </style>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const requestTypeSelect = document.getElementById('request-type-select');
-      const technicalFields = document.getElementById('technical-fields');
-      const courseFields = document.getElementById('course-fields');
-      const requestForm = document.querySelector('.request-form');
-      const successMessage = document.getElementById('request-success');
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const requestTypeSelect = document.getElementById('request-type-select');
+    const technicalFields = document.getElementById('technical-fields');
+    const courseFields = document.getElementById('course-fields');
+    const requestForm = document.querySelector('.request-form');
+    const successMessage = document.getElementById('request-success');
 
-      requestTypeSelect.addEventListener('change', function() {
-        if (this.value === 'technical') {
-          technicalFields.style.display = 'block';
-          courseFields.style.display = 'none';
-        } else if (this.value === 'course') {
-          technicalFields.style.display = 'none';
-          courseFields.style.display = 'block';
-        } else {
-          technicalFields.style.display = 'none';
-          courseFields.style.display = 'none';
+    requestTypeSelect.addEventListener('change', function() {
+      if (this.value === 'technical') {
+        technicalFields.style.display = 'block';
+        courseFields.style.display = 'none';
+      } else if (this.value === 'course') {
+        technicalFields.style.display = 'none';
+        courseFields.style.display = 'block';
+      } else {
+        technicalFields.style.display = 'none';
+        courseFields.style.display = 'none';
+      }
+    });
+
+    requestForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      fetch('/clients/create_request', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
         }
-      });
-
-      requestForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        fetch('/clients/create_request', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            successMessage.style.display = 'block';
-            requestForm.reset();
-            technicalFields.style.display = 'none';
-            courseFields.style.display = 'none';
-          } else {
-            alert('Failed to submit request: ' + data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('An error occurred while submitting the request');
-        });
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          successMessage.style.display = 'block';
+          requestForm.reset();
+          technicalFields.style.display = 'none';
+          courseFields.style.display = 'none';
+        } else {
+          alert('Neizdevās iesniegt pieprasījumu: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Kļūda:', error);
+        alert('Radās kļūda, iesniedzot pieprasījumu');
       });
     });
-  </script>
+  });
+</script>
 <% end %>

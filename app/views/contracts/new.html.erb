@@ -1,14 +1,14 @@
 <div class="contract-form-container">
   <div class="header">
-    <h1>Create New Contract</h1>
-    <%= link_to 'Back to Dashboard', workers_show_path, class: 'back-button' %>
+    <h1>Izveidot jaunu līgumu</h1>
+    <%= link_to 'Atpakaļ uz paneli', workers_show_path, class: 'back-button' %>
   </div>
 
   <div class="content">
     <%= form_with(model: @contract, local: true, class: 'contract-form') do |f| %>
       <% if @contract.errors.any? %>
         <div class="alert alert-danger">
-          <h2><%= pluralize(@contract.errors.count, "error") %> prohibited this contract from being saved:</h2>
+          <h2><%= pluralize(@contract.errors.count, "kļūda") %> nepieļāva līguma saglabāšanu:</h2>
           <ul>
             <% @contract.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -18,88 +18,88 @@
       <% end %>
 
       <div class="form-group">
-        <%= f.label :user_id, "Select Client" %>
+        <%= f.label :user_id, "Izvēlies klientu" %>
         <%= f.select :user_id, 
             options_from_collection_for_select(@clients, :id, :name),
-            { prompt: 'Select a client' },
+            { prompt: 'Izvēlies klientu' },
             { class: 'form-control', required: true }
         %>
       </div>
 
       <div class="contract-type-selector">
-        <h3>Select Contract Type</h3>
+        <h3>Izvēlies līguma veidu</h3>
         <div class="form-group">
-          <label>Contract Type</label>
+          <label>Līguma veids</label>
           <select id="contract-type" name="contract_type" class="form-control" required>
-            <option value="">Select a type</option>
-            <option value="company" <%= 'selected' if @contract_type == 'company' %>>Company Contract</option>
-            <option value="individual" <%= 'selected' if @contract_type == 'individual' %>>Individual Contract</option>
+            <option value="">Izvēlies veidu</option>
+            <option value="company" <%= 'selected' if @contract_type == 'company' %>>Uzņēmuma līgums</option>
+            <option value="individual" <%= 'selected' if @contract_type == 'individual' %>>Fiziskas personas līgums</option>
           </select>
         </div>
       </div>
 
       <div id="company-contract-fields" class="contract-fields" style="display: <%= @contract_type == 'company' ? 'block' : 'none' %>;">
-        <h3>Company Contract Details</h3>
+        <h3>Uzņēmuma līguma detaļas</h3>
         <%= f.fields_for :company_contract do |cf| %>
           <div class="form-group">
-            <%= cf.label :company_name %>
+            <%= cf.label :company_name, "Uzņēmuma nosaukums" %>
             <%= cf.text_field :company_name, class: 'form-control', required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :registration_no %>
+            <%= cf.label :registration_no, "Reģistrācijas numurs" %>
             <%= cf.text_field :registration_no, class: 'form-control', required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :representative %>
+            <%= cf.label :representative, "Pārstāvis" %>
             <%= cf.text_field :representative, class: 'form-control', required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :service_description %>
+            <%= cf.label :service_description, "Pakalpojuma apraksts" %>
             <%= cf.text_area :service_description, class: 'form-control', rows: 5, required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :price %>
+            <%= cf.label :price, "Cena (€)" %>
             <%= cf.number_field :price, class: 'form-control', step: '0.01', required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :duration %>
+            <%= cf.label :duration, "Ilgums" %>
             <%= cf.text_field :duration, class: 'form-control', required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :company_address %>
+            <%= cf.label :company_address, "Uzņēmuma adrese" %>
             <%= cf.text_field :company_address, class: 'form-control', required: true %>
           </div>
         <% end %>
       </div>
 
       <div id="individual-contract-fields" class="contract-fields" style="display: <%= @contract_type == 'individual' ? 'block' : 'none' %>;">
-        <h3>Individual Contract Details</h3>
+        <h3>Fiziskas personas līguma detaļas</h3>
         <%= f.fields_for :individual_contract do |cf| %>
           <div class="form-group">
-            <%= cf.label :service_description %>
+            <%= cf.label :service_description, "Pakalpojuma apraksts" %>
             <%= cf.text_area :service_description, class: 'form-control', rows: 5, required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :price %>
+            <%= cf.label :price, "Cena (€)" %>
             <%= cf.number_field :price, class: 'form-control', step: '0.01', required: true %>
           </div>
 
           <div class="form-group">
-            <%= cf.label :duration %>
+            <%= cf.label :duration, "Ilgums" %>
             <%= cf.text_field :duration, class: 'form-control', required: true %>
           </div>
         <% end %>
       </div>
 
       <div class="form-actions">
-        <%= f.submit "Create Contract", class: 'submit-button' %>
+        <%= f.submit "Izveidot līgumu", class: 'submit-button' %>
       </div>
     <% end %>
   </div>

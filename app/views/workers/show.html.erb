@@ -1,60 +1,60 @@
 <div class="worker-dashboard">
   <div class="header">
-    <h1>Worker Dashboard</h1>
+    <h1>Darbinieka panelis</h1>
     <div class="user-info">
-      <p>Welcome, <%= @user.name %></p>
-      <p>Email: <%= @user.email %></p>
+      <p>Sveicināts, <%= @user.name %></p>
+      <p>E-pasts: <%= @user.email %></p>
     </div>
     <div class="header-actions">
-      <%= link_to 'Create Contract', new_contract_path, class: 'create-contract-button' %>
-      <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'logout-button' %>
+      <%= link_to 'Izveidot līgumu', new_contract_path, class: 'create-contract-button' %>
+      <%= button_to 'Izrakstīties', destroy_user_session_path, method: :delete, class: 'logout-button' %>
     </div>
   </div>
 
   <div class="content">
-    <h2>Pending Requests</h2>
-    
+    <h2>Gaidāmās atbildes uz pieprasījumiem</h2>
+
     <div class="requests-list">
       <% if @pending_requests.any? %>
         <% @pending_requests.each do |request| %>
           <div class="request-card" id="request-<%= request.id %>">
             <div class="request-header">
               <h3>
-                <%= request.request_type.titleize %> Request
-                <span class="client-info">from <%= request.user.name %> (ID: <%= request.user.id %>)</span>
+                <%= request.request_type.titleize %> pieprasījums
+                <span class="client-info">no <%= request.user.name %> (ID: <%= request.user.id %>)</span>
               </h3>
               <span class="timestamp">
-                <%= request.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+                <%= request.created_at.strftime("%Y. gada %d. %B plkst. %H:%M") %>
               </span>
             </div>
 
             <div class="request-details">
               <% if request.request_type == 'technical' && request.technical_request.present? %>
                 <div class="description">
-                  <strong>Technical Issue Description:</strong>
+                  <strong>Tehniskas problēmas apraksts:</strong>
                   <p><%= request.technical_request.description %></p>
                 </div>
               <% elsif request.request_type == 'course' && request.course_content_request.present? %>
                 <div class="course-details">
-                  <p><strong>Course:</strong> <%= request.course_content_request.course %></p>
-                  <p><strong>Category:</strong> <%= request.course_content_request.category %></p>
-                  <p><strong>Description:</strong> <%= request.course_content_request.description %></p>
+                  <p><strong>Kurss:</strong> <%= request.course_content_request.course %></p>
+                  <p><strong>Kategorija:</strong> <%= request.course_content_request.category %></p>
+                  <p><strong>Apraksts:</strong> <%= request.course_content_request.description %></p>
                 </div>
               <% end %>
             </div>
 
             <div class="response-form">
               <div class="form-group">
-                <label for="response-<%= request.id %>">Your Response:</label>
+                <label for="response-<%= request.id %>">Tava atbilde:</label>
                 <textarea id="response-<%= request.id %>" class="form-control" rows="4"></textarea>
               </div>
-              <button class="submit-response" data-request-id="<%= request.id %>">Submit Response</button>
+              <button class="submit-response" data-request-id="<%= request.id %>">Iesniegt atbildi</button>
             </div>
           </div>
         <% end %>
       <% else %>
         <div class="no-requests">
-          <p>No pending requests at this time.</p>
+          <p>Šobrīd nav neviena pieprasījuma, kam gaida atbildi.</p>
         </div>
       <% end %>
     </div>
