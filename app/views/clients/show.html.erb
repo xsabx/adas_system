@@ -35,22 +35,35 @@
       <div id="course-fields" class="dynamic-fields" style="display: none;">
         <div class="form-group">
           <%= f.fields_for :course_content_request do |cf| %>
-            <%= cf.label :course, "Course Name" %>
-            <%= cf.text_field :course, class: 'form-control' %>
-            
+            <%= cf.label :course, "Course" %>
+            <%= cf.select :course, 
+                options_for_select([
+                  ['Programmēšanas pamati ar Ruby', 'Programmēšanas pamati ar Ruby'],
+                  ['Web izstrāde ar HTML, CSS un JavaScript', 'Web izstrāde ar HTML, CSS un JavaScript'],
+                  ['Datu struktūras un algoritmi', 'Datu struktūras un algoritmi'],
+                  ['Bāzes dati un SQL pamati', 'Bāzes dati un SQL pamati'],
+                  ['Mašīnmācīšanās ievads', 'Mašīnmācīšanās ievads'],
+                  ['Tīmekļa drošība un hakeru domāšana', 'Tīmekļa drošība un hakeru domāšana'],
+                  ['Mobilo lietotņu izstrāde ar React Native', 'Mobilo lietotņu izstrāde ar React Native'],
+                  ['Versiju kontrole ar Git un GitHub', 'Versiju kontrole ar Git un GitHub'],
+                  ['Testēšanas automatizācija ar Selenium un Robot Framework', 'Testēšanas automatizācija ar Selenium un Robot Framework'],
+                  ['Agilā izstrāde un Scrum komandas darbs', 'Agilā izstrāde un Scrum komandas darbs']
+                ]),
+                { prompt: 'Select a course' },
+                { class: 'form-control' }
+            %>
             <%= cf.label :category, "Category" %>
             <%= cf.select :category, 
                 options_for_select([
-                  ['Programming', 'programming'],
-                  ['Design', 'design'],
-                  ['Business', 'business'],
-                  ['Marketing', 'marketing']
-                ]), 
-                { prompt: 'Select category' },
-                { class: 'form-control' } 
+                  ['Neprecīza informācija', 'Neprecīza informācija'],
+                  ['Gramatikas kļūdas vai valodas problēmas', 'Gramatikas kļūdas vai valodas problēmas'],
+                  ['Trūkst saturs vai materiāli', 'Trūkst saturs vai materiāli'],
+                  ['Nestrādā testi vai uzdevumi', 'Nestrādā testi vai uzdevumi']
+                ]),
+                { prompt: 'Select a category' },
+                { class: 'form-control' }
             %>
-            
-            <%= cf.label :description, "Course Content Description" %>
+            <%= cf.label :description, "Description" %>
             <%= cf.text_area :description, class: 'form-control', rows: 5 %>
           <% end %>
         </div>
