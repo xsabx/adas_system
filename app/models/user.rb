@@ -14,4 +14,7 @@ class User < ApplicationRecord
   def worker?
     role == 'worker'
   end
+  has_many :requests
+  has_many :responses
+
 end

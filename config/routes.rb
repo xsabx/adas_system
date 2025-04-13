@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   
   # Role-based routes
   get 'clients/show', to: 'clients#show'
+  post 'clients/create_request', to: 'clients#create_request'
   get 'workers/show', to: 'workers#show'
   
   # Root path for non-authenticated users

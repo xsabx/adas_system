@@ -11,8 +11,59 @@
   </div>
 
   <div class="content">
-    <h2>Client Area</h2>
-    <p>This is your client dashboard. Add client-specific features here.</p>
+    <h2>New Request</h2>
+    
+    <%= form_with(model: @request, url: clients_create_request_path, local: true, class: 'request-form') do |f| %>
+      <div class="form-group">
+        <%= f.label :request_type, "Request Type" %>
+        <%= f.select :request_type, 
+            options_for_select([['Technical Request', 'technical'], ['Course Content Request', 'course']]), 
+            { prompt: 'Select request type' },
+            { class: 'form-control', id: 'request-type-select' } 
+        %>
+      </div>
+
+      <div id="technical-fields" class="dynamic-fields" style="display: none;">
+        <div class="form-group">
+          <%= f.fields_for :technical_request do |tf| %>
+            <%= tf.label :description, "Technical Issue Description" %>
+            <%= tf.text_area :description, class: 'form-control', rows: 5 %>
+          <% end %>
+        </div>
+      </div>
+
+      <div id="course-fields" class="dynamic-fields" style="display: none;">
+        <div class="form-group">
+          <%= f.fields_for :course_content_request do |cf| %>
+            <%= cf.label :course, "Course Name" %>
+            <%= cf.text_field :course, class: 'form-control' %>
+            
+            <%= cf.label :category, "Category" %>
+            <%= cf.select :category, 
+                options_for_select([
+                  ['Programming', 'programming'],
+                  ['Design', 'design'],
+                  ['Business', 'business'],
+                  ['Marketing', 'marketing']
+                ]), 
+                { prompt: 'Select category' },
+                { class: 'form-control' } 
+            %>
+            
+            <%= cf.label :description, "Course Content Description" %>
+            <%= cf.text_area :description, class: 'form-control', rows: 5 %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Submit Request", class: 'submit-button' %>
+      </div>
+    <% end %>
+
+    <div id="request-success" class="alert alert-success" style="display: none;">
+      Your request has been submitted successfully!
+    </div>
   </div>
 </div>
 
@@ -71,6 +122,103 @@
     h2 {
       color: #666;
       margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .submit-button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+      background-color: #218838;
+    }
+
+    .alert {
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 4px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
     }
   </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const requestTypeSelect = document.getElementById('request-type-select');
+      const technicalFields = document.getElementById('technical-fields');
+      const courseFields = document.getElementById('course-fields');
+      const requestForm = document.querySelector('.request-form');
+      const successMessage = document.getElementById('request-success');
+
+      requestTypeSelect.addEventListener('change', function() {
+        if (this.value === 'technical') {
+          technicalFields.style.display = 'block';
+          courseFields.style.display = 'none';
+        } else if (this.value === 'course') {
+          technicalFields.style.display = 'none';
+          courseFields.style.display = 'block';
+        } else {
+          technicalFields.style.display = 'none';
+          courseFields.style.display = 'none';
+        }
+      });
+
+      requestForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('/clients/create_request', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            successMessage.style.display = 'block';
+            requestForm.reset();
+            technicalFields.style.display = 'none';
+            courseFields.style.display = 'none';
+          } else {
+            alert('Failed to submit request: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while submitting the request');
+        });
+      });
+    });
+  </script>
 <% end %>
