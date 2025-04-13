@@ -1,0 +1,130 @@
+<div class="contract-show-container">
+  <div class="header">
+    <h1>Contract Details</h1>
+    <%= link_to 'Back to Contracts', contracts_path, class: 'back-button' %>
+  </div>
+
+  <div class="content">
+    <% if @contract.pdf.attached? %>
+      <div class="pdf-container">
+        <iframe src="<%= rails_blob_path(@contract.pdf, disposition: 'inline') %>" width="100%" height="600px" frameborder="0"></iframe>
+      </div>
+    <% else %>
+      <div class="no-pdf">
+        <p>No PDF available for this contract.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <style>
+    .contract-show-container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .back-button {
+      background-color: #6c757d;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .pdf-container {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .no-pdf {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-size: 18px;
+    }
+  </style>
+<% end %>
+
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2>Contract Details</h2>
+      <%= link_to 'Back to Dashboard', clients_show_path, class: 'btn btn-secondary' %>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Contract Information</h4>
+          <p><strong>Contract ID:</strong> <%= @contract.id %></p>
+          <p><strong>Registration Time:</strong> <%= @contract.registration_time.strftime("%B %d, %Y %H:%M") %></p>
+          <p><strong>Status:</strong> <span class="badge <%= @contract.status == 'accepted' ? 'bg-success' : 'bg-warning' %>"><%= @contract.status.titleize %></span></p>
+        </div>
+        
+        <div class="col-md-6">
+          <h4>Contract Type Details</h4>
+          <% if @contract.company_contract.present? %>
+            <p><strong>Contract Type:</strong> Company Contract</p>
+            <p><strong>Company Name:</strong> <%= @contract.company_contract.company_name %></p>
+            <p><strong>Registration No:</strong> <%= @contract.company_contract.registration_no %></p>
+            <p><strong>Representative:</strong> <%= @contract.company_contract.representative %></p>
+            <p><strong>Company Address:</strong> <%= @contract.company_contract.company_address %></p>
+            <p><strong>Service Description:</strong> <%= @contract.company_contract.service_description %></p>
+            <p><strong>Price:</strong> <%= number_to_currency(@contract.company_contract.price) %></p>
+            <p><strong>Duration:</strong> <%= @contract.company_contract.duration %> months</p>
+          <% elsif @contract.individual_contract.present? %>
+            <p><strong>Contract Type:</strong> Individual Contract</p>
+            <p><strong>Service Description:</strong> <%= @contract.individual_contract.service_description %></p>
+            <p><strong>Price:</strong> <%= number_to_currency(@contract.individual_contract.price) %></p>
+            <p><strong>Duration:</strong> <%= @contract.individual_contract.duration %> months</p>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h4>Actions</h4>
+        <div class="d-flex gap-2">
+          <% if @contract.pdf.attached? %>
+            <%= link_to download_contract_path(@contract), class: "btn btn-primary" do %>
+              <i class="fas fa-download"></i> Download Contract PDF
+            <% end %>
+          <% end %>
+          
+          <% if @contract.status != 'accepted' %>
+            <%= button_to accept_contract_path(@contract), 
+                          method: :post, 
+                          class: 'btn btn-success',
+                          data: { confirm: 'Are you sure you want to accept this contract?' } do %>
+              <i class="fas fa-check"></i> Accept Contract
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

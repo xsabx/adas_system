@@ -75,3 +75,7 @@ group :test do
 end
 
 gem 'devise'
+
+# PDF generation
+gem 'prawn'
+gem 'prawn-table'

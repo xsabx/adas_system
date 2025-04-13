@@ -4,6 +4,7 @@ class ClientsController < ApplicationController
 
   def show
     @user = current_user
+    @contracts = @user.contracts.order(created_at: :desc)
     @request = Request.new
     @request.build_technical_request
     @request.build_course_content_request

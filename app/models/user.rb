@@ -7,6 +7,10 @@ class User < ApplicationRecord
   validates :role, presence: true, inclusion: { in: %w[client worker] }
   validates :name, presence: true
 
+  has_many :contracts
+  has_many :requests
+  has_many :responses
+
   def client?
     role == 'client'
   end
@@ -14,7 +18,4 @@ class User < ApplicationRecord
   def worker?
     role == 'worker'
   end
-  has_many :requests
-  has_many :responses
-
 end

@@ -1,0 +1,287 @@
+<div class="contract-form-container">
+  <div class="header">
+    <h1>Create New Contract</h1>
+    <%= link_to 'Back to Dashboard', workers_show_path, class: 'back-button' %>
+  </div>
+
+  <div class="content">
+    <%= form_with(model: @contract, local: true, class: 'contract-form') do |f| %>
+      <% if @contract.errors.any? %>
+        <div class="alert alert-danger">
+          <h2><%= pluralize(@contract.errors.count, "error") %> prohibited this contract from being saved:</h2>
+          <ul>
+            <% @contract.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :user_id, "Select Client" %>
+        <%= f.select :user_id, 
+            options_from_collection_for_select(@clients, :id, :name),
+            { prompt: 'Select a client' },
+            { class: 'form-control', required: true }
+        %>
+      </div>
+
+      <div class="contract-type-selector">
+        <h3>Select Contract Type</h3>
+        <div class="form-group">
+          <label>Contract Type</label>
+          <select id="contract-type" name="contract_type" class="form-control" required>
+            <option value="">Select a type</option>
+            <option value="company" <%= 'selected' if @contract_type == 'company' %>>Company Contract</option>
+            <option value="individual" <%= 'selected' if @contract_type == 'individual' %>>Individual Contract</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="company-contract-fields" class="contract-fields" style="display: <%= @contract_type == 'company' ? 'block' : 'none' %>;">
+        <h3>Company Contract Details</h3>
+        <%= f.fields_for :company_contract do |cf| %>
+          <div class="form-group">
+            <%= cf.label :company_name %>
+            <%= cf.text_field :company_name, class: 'form-control', required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :registration_no %>
+            <%= cf.text_field :registration_no, class: 'form-control', required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :representative %>
+            <%= cf.text_field :representative, class: 'form-control', required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :service_description %>
+            <%= cf.text_area :service_description, class: 'form-control', rows: 5, required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :price %>
+            <%= cf.number_field :price, class: 'form-control', step: '0.01', required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :duration %>
+            <%= cf.text_field :duration, class: 'form-control', required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :company_address %>
+            <%= cf.text_field :company_address, class: 'form-control', required: true %>
+          </div>
+        <% end %>
+      </div>
+
+      <div id="individual-contract-fields" class="contract-fields" style="display: <%= @contract_type == 'individual' ? 'block' : 'none' %>;">
+        <h3>Individual Contract Details</h3>
+        <%= f.fields_for :individual_contract do |cf| %>
+          <div class="form-group">
+            <%= cf.label :service_description %>
+            <%= cf.text_area :service_description, class: 'form-control', rows: 5, required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :price %>
+            <%= cf.number_field :price, class: 'form-control', step: '0.01', required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= cf.label :duration %>
+            <%= cf.text_field :duration, class: 'form-control', required: true %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Create Contract", class: 'submit-button' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <style>
+    .contract-form-container {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .back-button {
+      background-color: #6c757d;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .submit-button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+      background-color: #218838;
+    }
+
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .contract-type-selector {
+      margin: 20px 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+
+    .contract-fields {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+
+    h3 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const contractTypeSelect = document.getElementById('contract-type');
+      const companyFields = document.getElementById('company-contract-fields');
+      const individualFields = document.getElementById('individual-contract-fields');
+      const form = document.querySelector('form');
+      
+      function handleContractTypeChange() {
+        const selectedType = contractTypeSelect.value;
+        
+        // Hide both fields initially
+        companyFields.style.display = 'none';
+        individualFields.style.display = 'none';
+        
+        // Remove any existing build fields
+        const existingBuildFields = document.querySelectorAll('input[name$="[_destroy]"]');
+        existingBuildFields.forEach(field => field.remove());
+        
+        // Show the appropriate fields based on selection
+        if (selectedType === 'company') {
+          companyFields.style.display = 'block';
+          // Add hidden field to indicate we're building a company contract
+          const buildField = document.createElement('input');
+          buildField.type = 'hidden';
+          buildField.name = 'contract[company_contract_attributes][_destroy]';
+          buildField.value = '0';
+          form.appendChild(buildField);
+          
+          // Make company fields required
+          companyFields.querySelectorAll('input, textarea').forEach(field => {
+            field.required = true;
+          });
+          
+          // Make individual fields not required
+          individualFields.querySelectorAll('input, textarea').forEach(field => {
+            field.required = false;
+          });
+        } else if (selectedType === 'individual') {
+          individualFields.style.display = 'block';
+          // Add hidden field to indicate we're building an individual contract
+          const buildField = document.createElement('input');
+          buildField.type = 'hidden';
+          buildField.name = 'contract[individual_contract_attributes][_destroy]';
+          buildField.value = '0';
+          form.appendChild(buildField);
+          
+          // Make individual fields required
+          individualFields.querySelectorAll('input, textarea').forEach(field => {
+            field.required = true;
+          });
+          
+          // Make company fields not required
+          companyFields.querySelectorAll('input, textarea').forEach(field => {
+            field.required = false;
+          });
+        }
+      }
+      
+      // Set up the event listener
+      contractTypeSelect.addEventListener('change', function() {
+        handleContractTypeChange();
+        window.location.href = window.location.pathname + '?contract_type=' + contractTypeSelect.value;
+      });
+      
+      // Run once on page load to handle any pre-selected value
+      handleContractTypeChange();
+
+      // Add form submission validation
+      form.addEventListener('submit', function(e) {
+        const selectedType = contractTypeSelect.value;
+        if (!selectedType) {
+          e.preventDefault();
+          alert('Please select a contract type');
+          return false;
+        }
+      });
+    });
+  </script>
+<% end %> 

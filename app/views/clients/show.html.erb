@@ -80,6 +80,33 @@
   </div>
 </div>
 
+<div class="contracts-section">
+  <h2>Your Contracts</h2>
+  <% pending_contracts = @contracts.where.not(status: 'accepted') %>
+  <% if pending_contracts.any? %>
+    <% pending_contracts.each do |contract| %>
+      <div class="contract-item">
+        <div class="contract-details">
+          <p>Contract Number: <%= contract.id %></p>
+          <p>Registration Date: <%= contract.registration_time ? contract.registration_time.strftime('%B %d, %Y') : 'Not registered' %></p>
+          <p>Status: <%= contract.status.titleize %></p>
+        </div>
+        <div class="contract-actions">
+          <% if contract.pdf.attached? %>
+            <%= link_to 'Download PDF', download_contract_path(contract), class: 'btn btn-primary' %>
+          <% end %>
+          <%= button_to 'Accept Contract', accept_contract_path(contract), 
+                        method: :post, 
+                        class: 'btn btn-success',
+                        data: { confirm: 'Are you sure you want to accept this contract?' } %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="no-contracts">You don't have any pending contracts.</p>
+  <% end %>
+</div>
+
 <% content_for :head do %>
   <style>
     .client-dashboard {
@@ -180,6 +207,80 @@
       background-color: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
+    }
+
+    .contracts-section {
+      margin-top: 30px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .contracts-list {
+      margin-top: 20px;
+    }
+
+    .contract-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .contract-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .contract-info {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .contract-number {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .contract-date {
+      color: #666;
+    }
+
+    .contract-status {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      background-color: #e9ecef;
+      color: #495057;
+    }
+
+    .download-button {
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .download-button:hover {
+      background-color: #0056b3;
+      color: white;
+      text-decoration: none;
+    }
+
+    .no-contracts {
+      text-align: center;
+      color: #666;
+      padding: 20px;
     }
   </style>
 

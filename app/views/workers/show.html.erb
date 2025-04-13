@@ -5,7 +5,8 @@
       <p>Welcome, <%= @user.name %></p>
       <p>Email: <%= @user.email %></p>
     </div>
-    <div class="logout">
+    <div class="header-actions">
+      <%= link_to 'Create Contract', new_contract_path, class: 'create-contract-button' %>
       <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'logout-button' %>
     </div>
   </div>
@@ -187,6 +188,27 @@
       padding: 40px;
       color: #666;
       font-style: italic;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .create-contract-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-decoration: none;
+    }
+
+    .create-contract-button:hover {
+      background-color: #0056b3;
     }
   </style>
 
