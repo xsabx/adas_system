@@ -1,0 +1,22 @@
+<div class="dashboard-container">
+  <h1>Welcome, <%= current_user.name %></h1>
+  
+  <% if current_user.client? %>
+    <div class="client-dashboard">
+      <h2>Client Dashboard</h2>
+      <p>This is your client dashboard. Add client-specific features here.</p>
+    </div>
+  <% elsif current_user.worker? %>
+    <div class="worker-dashboard">
+      <h2>Worker Dashboard</h2>
+      <p>This is your worker dashboard. Add worker-specific features here.</p>
+    </div>
+  <% end %>
+
+  <div class="user-info">
+    <p>Email: <%= current_user.email %></p>
+    <p>Role: <%= current_user.role.titleize %></p>
+  </div>
+
+  <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'sign-out-button' %>
+</div>
