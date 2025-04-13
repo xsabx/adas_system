@@ -11,8 +11,52 @@
   </div>
 
   <div class="content">
-    <h2>Worker Area</h2>
-    <p>This is your worker dashboard. Add worker-specific features here.</p>
+    <h2>Pending Requests</h2>
+    
+    <div class="requests-list">
+      <% if @pending_requests.any? %>
+        <% @pending_requests.each do |request| %>
+          <div class="request-card" id="request-<%= request.id %>">
+            <div class="request-header">
+              <h3>
+                <%= request.request_type.titleize %> Request
+                <span class="client-info">from <%= request.user.name %> (ID: <%= request.user.id %>)</span>
+              </h3>
+              <span class="timestamp">
+                <%= request.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+              </span>
+            </div>
+
+            <div class="request-details">
+              <% if request.request_type == 'technical' && request.technical_request.present? %>
+                <div class="description">
+                  <strong>Technical Issue Description:</strong>
+                  <p><%= request.technical_request.description %></p>
+                </div>
+              <% elsif request.request_type == 'course' && request.course_content_request.present? %>
+                <div class="course-details">
+                  <p><strong>Course:</strong> <%= request.course_content_request.course %></p>
+                  <p><strong>Category:</strong> <%= request.course_content_request.category %></p>
+                  <p><strong>Description:</strong> <%= request.course_content_request.description %></p>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="response-form">
+              <div class="form-group">
+                <label for="response-<%= request.id %>">Your Response:</label>
+                <textarea id="response-<%= request.id %>" class="form-control" rows="4"></textarea>
+              </div>
+              <button class="submit-response" data-request-id="<%= request.id %>">Submit Response</button>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="no-requests">
+          <p>No pending requests at this time.</p>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
 
@@ -63,14 +107,152 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
-      color: #333;
-      margin: 0;
+    .request-card {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
 
-    h2 {
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .request-header h3 {
+      margin: 0;
+      color: #333;
+      font-size: 1.2em;
+    }
+
+    .client-info {
+      font-size: 0.9em;
       color: #666;
-      margin-top: 0;
+      margin-left: 10px;
+    }
+
+    .timestamp {
+      color: #888;
+      font-size: 0.9em;
+    }
+
+    .request-details {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 4px;
+    }
+
+    .description strong, .course-details strong {
+      color: #555;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .submit-response {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-response:hover {
+      background-color: #218838;
+    }
+
+    .no-requests {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      document.querySelectorAll('.submit-response').forEach(button => {
+        button.addEventListener('click', function() {
+          const requestId = this.dataset.requestId;
+          const responseContent = document.getElementById(`response-${requestId}`).value;
+          const requestCard = document.getElementById(`request-${requestId}`);
+
+          if (!responseContent.trim()) {
+            alert('Please enter a response before submitting.');
+            return;
+          }
+
+          fetch('/workers/respond_to_request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken,
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              request_id: requestId,
+              content: responseContent
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+              requestCard.style.animation = 'fadeOut 0.5s';
+              setTimeout(() => {
+                requestCard.remove();
+                if (document.querySelectorAll('.request-card').length === 0) {
+                  document.querySelector('.requests-list').innerHTML = `
+                    <div class="no-requests">
+                      <p>No pending requests at this time.</p>
+                    </div>
+                  `;
+                }
+              }, 500);
+            } else {
+              alert('Failed to submit response: ' + data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the response. Please try again.');
+          });
+        });
+      });
+    });
+  </script>
+
+  <style>
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
     }
   </style>
 <% end %>
