@@ -88,18 +88,23 @@ class ContractsController < ApplicationController
 
   def generate_and_attach_pdf
     pdf = Prawn::Document.new
-
+  
+    # ✅ Ielādē ārējo fontu ar UTF-8 atbalstu
+    font_path = Rails.root.join("app/assets/fonts/DejaVuSans.ttf")
+    pdf.font_families.update("DejaVuSans" => { normal: font_path })
+    pdf.font("DejaVuSans")
+  
     pdf.text "Līgums ##{@contract.id}", size: 20, style: :bold
     pdf.move_down 20
-
+  
     client = User.find(@contract.user_id)
     creator = User.find(@contract.registered_by)
-
+  
     pdf.text "Klients: #{client.name}"
     pdf.text "Izveidoja: #{creator.name}"
     pdf.text "Datums: #{@contract.created_at.strftime('%Y. gada %d. %B')}"
     pdf.move_down 20
-
+  
     if @contract.company_contract.present?
       pdf.text "Uzņēmuma līguma informācija", style: :bold
       pdf.move_down 10
@@ -117,13 +122,13 @@ class ContractsController < ApplicationController
       pdf.text "Cena: #{@contract.individual_contract.price} €"
       pdf.text "Ilgums: #{@contract.individual_contract.duration}"
     end
-
+  
     pdf_content = pdf.render
-
+  
     @contract.pdf.attach(
       io: StringIO.new(pdf_content),
       filename: "ligums_#{@contract.id}.pdf",
       content_type: 'application/pdf'
     )
-  end
+  end  
 end
