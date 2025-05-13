@@ -94,7 +94,7 @@ class ContractsController < ApplicationController
     pdf.font_families.update("DejaVuSans" => { normal: font_path })
     pdf.font("DejaVuSans")
   
-    pdf.text "Līgums ##{@contract.id}", size: 20, style: :bold
+    pdf.text "Līgums ##{@contract.id}", size: 20
     pdf.move_down 20
   
     client = User.find(@contract.user_id)
@@ -106,7 +106,7 @@ class ContractsController < ApplicationController
     pdf.move_down 20
   
     if @contract.company_contract.present?
-      pdf.text "Uzņēmuma līguma informācija", style: :bold
+      pdf.text "Uzņēmuma līguma informācija"
       pdf.move_down 10
       pdf.text "Uzņēmuma nosaukums: #{@contract.company_contract.company_name}"
       pdf.text "Reģistrācijas numurs: #{@contract.company_contract.registration_no}"
@@ -116,7 +116,7 @@ class ContractsController < ApplicationController
       pdf.text "Ilgums: #{@contract.company_contract.duration}"
       pdf.text "Uzņēmuma adrese: #{@contract.company_contract.company_address}"
     elsif @contract.individual_contract.present?
-      pdf.text "Fiziskas personas līguma informācija", style: :bold
+      pdf.text "Fiziskas personas līguma informācija"
       pdf.move_down 10
       pdf.text "Pakalpojuma apraksts: #{@contract.individual_contract.service_description}"
       pdf.text "Cena: #{@contract.individual_contract.price} €"
